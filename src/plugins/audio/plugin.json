@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "entry": "index.ts",
+  "name": "audio",
+  "title": "音频格式转换",
+  "description": "WAV / FLAC / OGG / MP3 批量互转",
+  "category": "音频工具",
+  "accent": "magenta",
+  "fields": [
+    {
+      "key": "input",
+      "label": "输入路径",
+      "description": "默认当前目录；文件或文件夹，可粘贴带双引号的路径",
+      "type": "text",
+      "default": "."
+    },
+    {
+      "key": "output",
+      "label": "输出目录",
+      "description": "留空在输入目录下新建 aboom_output；重名规则可切换，指定目录则跳过或覆盖已有结果",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "output-grow-o",
+      "label": "输出目录增加 o",
+      "description": "自动输出重名时：开启增加中间的 o，关闭追加数字 1、2、3；指定输出目录不受影响",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "from",
+      "label": "来源格式",
+      "description": "只扫描此格式，单文件也需要匹配",
+      "type": "select",
+      "choices": [
+        "WAV",
+        "FLAC",
+        "OGG",
+        "MP3"
+      ],
+      "default": "WAV"
+    },
+    {
+      "key": "to",
+      "label": "目标格式",
+      "description": "FLAC 无损 / OGG 质量 5 / MP3 质量 2 / WAV 16 位",
+      "type": "select",
+      "choices": [
+        "FLAC",
+        "OGG",
+        "MP3",
+        "WAV"
+      ],
+      "default": "FLAC"
+    },
+    {
+      "key": "recursive",
+      "label": "包含子文件夹",
+      "description": "保留子文件夹结构，排除嵌套输出目录",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "overwrite",
+      "label": "覆盖已有结果",
+      "description": "默认跳过同名文件；覆盖需要确认",
+      "type": "boolean",
+      "default": false,
+      "confirmation": "将替换输出目录中的同名结果。"
+    },
+    {
+      "key": "ffmpeg",
+      "label": "FFmpeg 路径",
+      "description": "留空自动检测环境变量、PATH 和常见安装位置；也可填写本地程序路径",
+      "type": "text"
+    }
+  ]
+}

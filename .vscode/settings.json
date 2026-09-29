@@ -1,0 +1,91 @@
+{
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.guides.bracketPairs": "active",
+  "editor.renderWhitespace": "boundary",
+  "editor.stickyScroll.enabled": true,
+  "editor.hover.sticky": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "prettier.enable": false,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "eslint.format.enable": true,
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "json",
+    "jsonc",
+    "yaml",
+    "markdown"
+  ],
+  "eslint.rules.customizations": [
+    { "rule": "style/*", "severity": "off", "fixable": true },
+    { "rule": "format/*", "severity": "off", "fixable": true },
+    { "rule": "*-indent", "severity": "off", "fixable": true },
+    { "rule": "*-spacing", "severity": "off", "fixable": true },
+    { "rule": "*-spaces", "severity": "off", "fixable": true },
+    { "rule": "*-order", "severity": "off", "fixable": true },
+    { "rule": "*-dangle", "severity": "off", "fixable": true },
+    { "rule": "*-newline", "severity": "off", "fixable": true },
+    { "rule": "*quotes", "severity": "off", "fixable": true },
+    { "rule": "*semi", "severity": "off", "fixable": true }
+  ],
+  "errorLens.enabledDiagnosticLevels": ["warning", "error"],
+  "errorLens.excludeBySource": ["cSpell"],
+  "errorLens.delay": 500,
+  "cSpell.language": "en,en-US",
+  "cSpell.allowCompoundWords": true,
+  "cSpell.words": ["aboom", "antfu", "esbuild", "fflate", "pnpm", "tsx", "TUI", "unocss"],
+  "cSpell.ignorePaths": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/release/**",
+    "**/.git/**",
+    "**/.agents/**",
+    "**/.codex/**",
+    "pnpm-lock.yaml"
+  ],
+  "where-am-i.template": "{icon} Aboom Toolbox",
+  "where-am-i.colorful": false,
+  "workbench.editor.highlightModifiedTabs": true,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .editorconfig, eslint.config.mjs",
+    ".gitignore": ".gitattributes",
+    "tsconfig.json": "tsconfig.*.json",
+    "*.mjs": "$(capture).mjs.map, $(capture).mjs.LEGAL.txt"
+  },
+  "search.exclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/release/**": true,
+    "pnpm-lock.yaml": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/release/**": true
+  },
+  "npm.packageManager": "pnpm",
+  "npm.scriptRunner": "pnpm",
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  }
+}

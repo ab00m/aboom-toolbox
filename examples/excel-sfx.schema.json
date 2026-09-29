@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "sheet": 1,
+  "headerRow": 1,
+  "dataStartRow": 2,
+  "columns": {
+    "ContentId": { "header": "ContentId", "type": "integer", "required": true },
+    "SFX": { "header": "SFX", "type": "string", "default": null },
+    "Event": { "header": "Event", "type": "string", "required": true },
+    "Mode": { "header": "Mode", "type": "string", "required": true },
+    "Volume": { "header": "Volume", "type": "number", "default": 1 },
+    "Delay": { "header": "Delay", "type": "number", "default": -1 },
+    "Immediate": { "header": "Immediate", "type": "boolean", "default": false }
+  },
+  "skipEmpty": "Event",
+  "index": { "field": "EventIndex", "groupBy": "ContentId" }
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "entry": "index.ts",
+  "name": "excel",
+  "title": "Excel → JSON",
+  "description": "通过预设或自定义表头、字段及默认值批量生成 JSON",
+  "category": "数据工具",
+  "accent": "green",
+  "fields": [
+    {
+      "key": "input",
+      "label": "输入路径",
+      "description": "默认当前目录；文件或文件夹，可粘贴带双引号的路径",
+      "type": "text",
+      "default": "."
+    },
+    {
+      "key": "output",
+      "label": "输出目录",
+      "description": "留空在输入目录下新建 aboom_output；重名规则可切换，指定目录则跳过或覆盖已有结果",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "output-grow-o",
+      "label": "输出目录增加 o",
+      "description": "自动输出重名时：开启增加中间的 o，关闭追加数字 1、2、3；指定输出目录不受影响",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "recursive",
+      "label": "包含子文件夹",
+      "description": "保留子文件夹结构，排除嵌套输出目录",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "overwrite",
+      "label": "覆盖已有结果",
+      "description": "默认跳过同名文件；覆盖需要确认",
+      "type": "boolean",
+      "default": false,
+      "confirmation": "将替换输出目录中的同名结果。"
+    },
+    {
+      "key": "preset",
+      "label": "格式预设",
+      "description": "默认 table 按表头导出全部字段；sfx 使用音效规则",
+      "type": "select",
+      "choices": [
+        "table",
+        "sfx"
+      ],
+      "default": "table",
+      "choiceDescriptions": {
+        "table": "通用表格：按表头导出字段，保留原生类型，空单元格为 null",
+        "sfx": "音效表：固定字段、空 Event 跳行、默认值及 EventIndex 编号"
+      }
+    },
+    {
+      "key": "schema",
+      "label": "格式配置文件",
+      "description": "JSON 文件路径；覆盖预设中的工作表、表头行、字段映射和默认值",
+      "type": "text",
+      "default": ""
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "entry": "index.ts",
+  "name": "image",
+  "title": "图片裁切与缩放",
+  "description": "PNG / JPG / JPEG 按最长边缩放，居中裁切到指定倍数",
+  "category": "图片工具",
+  "accent": "cyan",
+  "fields": [
+    {
+      "key": "input",
+      "label": "输入路径",
+      "description": "默认当前目录；文件或文件夹，可粘贴带双引号的路径",
+      "type": "text",
+      "default": "."
+    },
+    {
+      "key": "output",
+      "label": "输出目录",
+      "description": "留空在输入目录下新建 aboom_output；重名规则可切换，指定目录则跳过或覆盖已有结果",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "output-grow-o",
+      "label": "输出目录增加 o",
+      "description": "自动输出重名时：开启增加中间的 o，关闭追加数字 1、2、3；指定输出目录不受影响",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "size",
+      "label": "目标最长边（像素）",
+      "description": "等比缩放；默认小图保持原尺寸",
+      "type": "text",
+      "default": "2048",
+      "required": true
+    },
+    {
+      "key": "allow-upscale",
+      "label": "允许放大小图",
+      "description": "开启后，小图也会等比放大到目标最长边",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "crop-multiple",
+      "label": "按倍数居中裁切",
+      "description": "缩放后裁切宽高到指定倍数，仅移除边缘像素",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "multiple",
+      "label": "裁切倍数",
+      "description": "例如 4；宽或高不足一个倍数时返回文件错误",
+      "type": "text",
+      "default": "4",
+      "required": true
+    },
+    {
+      "key": "dry-run",
+      "label": "仅预览处理计划",
+      "description": "读取尺寸并显示处理计划，不生成文件或目录",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "recursive",
+      "label": "包含子文件夹",
+      "description": "保留子文件夹结构，排除嵌套输出目录",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "overwrite",
+      "label": "覆盖已有结果",
+      "description": "默认跳过同名文件；覆盖需要确认",
+      "type": "boolean",
+      "default": false,
+      "confirmation": "将替换输出目录中的同名结果。"
+    }
+  ]
+}

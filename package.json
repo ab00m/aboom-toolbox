@@ -1,0 +1,70 @@
+{
+  "name": "aboom-toolbox",
+  "type": "module",
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.19.0",
+  "description": "面向游戏开发流程的本地 CLI / TUI 插件工具箱",
+  "license": "MIT",
+  "homepage": "https://github.com/ab00m/aboom-toolbox#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ab00m/aboom-toolbox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ab00m/aboom-toolbox/issues"
+  },
+  "bin": {
+    "aboom": "./dist/cli.mjs"
+  },
+  "files": [
+    "dist/*.mjs",
+    "dist/plugins/*/index.mjs",
+    "dist/plugins/*/plugin.json"
+  ],
+  "engines": {
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
+  },
+  "scripts": {
+    "dev": "tsx src/cli/index.ts",
+    "dev:watch": "tsx watch src/cli/index.ts",
+    "start": "node dist/cli.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test:unit": "node --import tsx --test test/commands.test.mjs test/conversions.test.mjs test/tui.test.mjs test/plugins.test.mjs test/image.test.mjs test/config.test.mjs",
+    "test": "node --import tsx --test test/cli.test.mjs test/commands.test.mjs test/conversions.test.mjs test/tui.test.mjs test/plugins.test.mjs test/image.test.mjs test/config.test.mjs",
+    "test:package": "pnpm run build && node --import tsx --test test/package.test.mjs",
+    "check": "pnpm run lint && pnpm run typecheck && pnpm run test",
+    "prepack": "pnpm run check && pnpm run build",
+    "package": "pnpm pack --pack-destination release && pnpm run verify:release",
+    "verify:release": "node scripts/verify-release.mjs",
+    "release:check": "node scripts/release-check.mjs",
+    "build:watch": "tsx watch --include src scripts/build.mjs",
+    "dev:tui": "tsx src/tui/entry.ts"
+  },
+  "dependencies": {
+    "commander": "^14.0.3",
+    "ink": "^6.8.0",
+    "react": "^19.2.0",
+    "read-excel-file": "^9.3.10",
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^9.5.1",
+    "@eslint-react/eslint-plugin": "^5.20.8",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.2.0",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "cross-spawn": "^7.0.6",
+    "eslint": "^10.11.0",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "fflate": "^0.8.3",
+    "ink-testing-library": "^4.0.0",
+    "semver": "^7.8.5",
+    "tar": "^7.5.22",
+    "tsdown": "^0.23.0",
+    "tsx": "^4.23.15",
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
+  }
+}
