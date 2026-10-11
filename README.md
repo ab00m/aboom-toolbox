@@ -6,7 +6,27 @@
 
 ## 安装与启动
 
-当前为发布前版本。正式发布到 npm 后，可安装并启动：
+可以直接从 Git 仓库安装源码，不需要维护者创建 Release 或让使用者手动打包。待本次改动提交并推送到远端 `main` 后，使用者安装 Git、npm 12.1+ 及其兼容的 Node.js（22.22.2+、24.15+ 或 26+），运行：
+
+```console
+npm install --global --allow-git=root --allow-scripts=aboom-toolbox "git+https://github.com/ab00m/aboom-toolbox.git#main"
+aboom --help
+```
+
+Git 地址可以换成其他可访问的 Git 托管地址；`#main` 可换成标签或完整提交号。安装过程会下载开发依赖并在使用者本机完成构建，需要能访问 npm registry；如果 npm 镜像缺少版本，可在安装命令中指定 `--registry=https://registry.npmjs.org`。本机 npm 11.16.0 的全局 Git 安装存在上游缺陷，详见[分发说明](docs/release.md#git-源码直装)。
+
+若维护者发布了已构建的成品包，也可从 GitHub Release 安装。完成[首次发布](docs/release.md#github-release-成品分发)后，使用者运行：
+
+```console
+npm install --global "https://github.com/ab00m/aboom-toolbox/releases/latest/download/aboom-toolbox.tgz"
+aboom tui
+```
+
+用户只需 Node.js 和 npm，无需 Git、pnpm、克隆源码或打包。需要固定版本时，将地址中的 `latest/download` 换成 `download/v0.1.0`。更新时重新执行同一条安装命令。
+
+npm 12 的命令需追加 `--allow-remote=root`，明确允许本次远程 TGZ 来源。
+
+正式发布到 npm 后，也可安装并启动：
 
 ```console
 npm install --global aboom-toolbox
@@ -24,6 +44,8 @@ aboom --help
 
 npm 会自动安装运行依赖；安装时需要网络或已有依赖缓存。Node.js 与 FFmpeg 由本机提供。
 
+成品 TGZ 和源码归档是不同的文件。两种安装方式及验证结论见[分发说明](docs/release.md)。
+
 ## 常用命令
 
 ```console
@@ -31,6 +53,7 @@ aboom excel --input "./素材/数据.xlsx"
 aboom excel --input "./素材/音效.xlsx" --preset sfx
 aboom audio --input "./素材/音频" --from WAV --to OGG --recursive
 aboom image --input "./素材/图片" --size 2048 --crop-multiple --multiple 4 --recursive
+aboom screenshot --input "./素材/截图" --format webp --quality 85 --recursive
 aboom image --input "./素材/图片" --dry-run --json
 aboom plugins
 ```
@@ -38,6 +61,7 @@ aboom plugins
 - **Excel**：默认 `table`，首张表、首行表头，每个数据行导出一个 JSON 对象；支持显式 `sfx` 预设和 `--schema` 自定义规则。读取已保存的公式缓存，不重新计算公式。[格式配置](docs/excel.md)
 - **音频**：WAV/FLAC/OGG/MP3 互转。FLAC 无损，OGG 使用 libvorbis 质量 5，MP3 使用 libmp3lame 质量 2，WAV 为 16 位 PCM；保留采样率。可用 `--ffmpeg`、`ABOOM_FFMPEG` 或 PATH 指定程序，也会检查常见安装位置。显式路径无效时提示修正。
 - **图片**：PNG/JPG/JPEG 按最长边等比缩放，默认 2048；小图原样复制，`--allow-upscale` 允许放大。按倍数居中裁切在缩放后执行。缩放文件追加 `@<尺寸>`，裁切追加 `@clip`；保留 PNG 透明通道，JPEG 质量 92，校正 EXIF 方向。`--dry-run` 只预览，不生成文件或目录。
+- **截图压缩**：独立的 `screenshot` 命令，不执行裁切。默认转为 WebP（质量 85），等比缩小到最长边 1080 像素，适合贴入文档；也可选 JPEG、PNG 或原格式。
 
 ## 输入与输出目录
 

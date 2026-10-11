@@ -70,6 +70,8 @@ Core 统一默认路径、扫描、逐文件准备错误、最终碰撞检查、
 
 可选 check(options) 返回 available、message 和可选 executable，TUI 提供重新检测。真正执行时必须再次检查依赖；检测结果只是当时状态。
 
+内置 `screenshot` 插件是单独的截图压缩命令，不改变 `image` 插件原有的裁切与缩放行为。它默认以 WebP 质量 85 输出，保持宽高比、不裁切，并将最长边限制在 1080 像素；可选 JPEG、PNG 或原格式。
+
 ## 发现、停用与分发
 
 1. 创建描述及默认执行入口，运行 pnpm dev plugins 检查发现结果。

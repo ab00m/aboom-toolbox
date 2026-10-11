@@ -19,7 +19,8 @@
   "files": [
     "dist/*.mjs",
     "dist/plugins/*/index.mjs",
-    "dist/plugins/*/plugin.json"
+    "dist/plugins/*/plugin.json",
+    "scripts/prepare.mjs"
   ],
   "engines": {
     "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
@@ -32,14 +33,16 @@
     "build": "node scripts/build.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test:unit": "node --import tsx --test test/commands.test.mjs test/conversions.test.mjs test/tui.test.mjs test/plugins.test.mjs test/image.test.mjs test/config.test.mjs",
-    "test": "node --import tsx --test test/cli.test.mjs test/commands.test.mjs test/conversions.test.mjs test/tui.test.mjs test/plugins.test.mjs test/image.test.mjs test/config.test.mjs",
+    "test:unit": "node --import tsx --test test/commands.test.mjs test/conversions.test.mjs test/tui.test.mjs test/plugins.test.mjs test/image.test.mjs test/config.test.mjs test/github-release.test.mjs",
+    "test": "node --import tsx --test test/cli.test.mjs test/commands.test.mjs test/conversions.test.mjs test/tui.test.mjs test/plugins.test.mjs test/image.test.mjs test/config.test.mjs test/github-release.test.mjs",
     "test:package": "pnpm run build && node --import tsx --test test/package.test.mjs",
     "check": "pnpm run lint && pnpm run typecheck && pnpm run test",
-    "prepack": "pnpm run check && pnpm run build",
+    "prepack": "node scripts/prepack.mjs",
+    "prepare": "node scripts/prepare.mjs",
     "package": "pnpm pack --pack-destination release && pnpm run verify:release",
     "verify:release": "node scripts/verify-release.mjs",
     "release:check": "node scripts/release-check.mjs",
+    "release:github": "node scripts/github-release.mjs",
     "build:watch": "tsx watch --include src scripts/build.mjs",
     "dev:tui": "tsx src/tui/entry.ts"
   },

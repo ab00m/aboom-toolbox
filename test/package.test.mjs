@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict'
+import { fork } from 'node:child_process'
+import { once } from 'node:events'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { it } from 'node:test'
@@ -45,6 +47,25 @@ it('npm files 白名单排除构建目录中的依赖、日志和调试摘要', 
     const { unlink } = await import('node:fs/promises')
     await unlink(probe)
   }
+})
+
+it('远程 TGZ 安装支持 latest 重定向，无需消费者获取源码或打包', { timeout: 240000 }, async () => {
+  await withTemporaryDirectory(async (directory) => {
+    const tarball = await createPackage(directory)
+    const metadata = JSON.parse(await readFile(join(projectDirectory, 'package.json'), 'utf8'))
+    const server = fork(new URL('./package-server.mjs', import.meta.url), [tarball, metadata.version, metadata.name], { stdio: ['ignore', 'ignore', 'pipe', 'ipc'] })
+    try {
+      const [{ port }] = await once(server, 'message', { signal: AbortSignal.timeout(10000) })
+      await verifyRelease(tarball, { installSource: `http://127.0.0.1:${port}/releases/latest/download/${metadata.name}.tgz` })
+    }
+    finally {
+      if (server.exitCode === null && server.signalCode === null) {
+        const stopped = once(server, 'exit')
+        server.kill()
+        await stopped
+      }
+    }
+  })
 })
 
 it('转换验收遵循实际插件目录，空目录不要求默认模块存在', async () => {

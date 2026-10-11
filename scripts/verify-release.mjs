@@ -41,7 +41,7 @@ export async function inspectPackage(tarball, metadata) {
       entry.on('end', () => contents.set(entry.path, Buffer.concat(chunks)))
     },
   })
-  const expected = ['package.json', 'README.md', 'LICENSE', 'dist/core.mjs', 'dist/cli.mjs', 'dist/tui.mjs']
+  const expected = ['package.json', 'README.md', 'LICENSE', 'scripts/prepare.mjs', 'dist/core.mjs', 'dist/cli.mjs', 'dist/tui.mjs']
   for (const folder of await readdir(join(projectDirectory, 'dist/plugins'))) {
     expected.push(`dist/plugins/${folder}/index.mjs`, `dist/plugins/${folder}/plugin.json`)
   }
@@ -63,17 +63,30 @@ export async function inspectPackage(tarball, metadata) {
   return { manifest, entries }
 }
 
-export async function verifyRelease(tarball) {
+export async function verifyRelease(tarball, { installSource } = {}) {
   const metadata = await readMetadata()
   tarball = resolve(tarball ?? join(projectDirectory, 'release', `${metadata.name}-${metadata.version}.tgz`))
   const inspected = await inspectPackage(tarball, metadata)
   await withTemporaryDirectory(async (directory) => {
     const prefix = join(directory, 'install')
-    const install = run('npm', ['install', '--global', '--no-audit', '--no-fund', '--prefix', prefix, '--cache', join(directory, 'npm-cache'), tarball], directory, {}, 180000)
+    const source = installSource ?? tarball
+    const npmVersion = run('npm', ['--version'], directory)
+    if (npmVersion.status !== 0)
+      throw new Error('无法读取 npm 版本')
+    const sourceOptions = Number.parseInt(npmVersion.stdout, 10) >= 12 ? [/^https?:\/\//.test(source) ? '--allow-remote=root' : '--allow-file=root'] : []
+    const install = run('npm', ['install', '--global', '--no-audit', '--no-fund', '--prefix', prefix, '--cache', join(directory, 'npm-cache'), ...sourceOptions, source], directory, {}, 180000)
     expectResult(install, 0, 'added')
     const packageDirectory = process.platform === 'win32' ? join(prefix, 'node_modules', metadata.name) : join(prefix, 'lib/node_modules', metadata.name)
     const cli = join(packageDirectory, 'dist/cli.mjs')
     const shim = process.platform === 'win32' ? join(prefix, 'aboom.cmd') : join(prefix, 'bin/aboom')
+    const installedManifest = JSON.parse(await readFile(join(packageDirectory, 'package.json'), 'utf8'))
+    assert.equal(installedManifest.name, metadata.name)
+    assert.equal(installedManifest.version, metadata.version)
+    assert.deepEqual(installedManifest.dependencies, metadata.dependencies)
+    for (const entry of inspected.entries.filter(entry => entry.path.startsWith('package/dist/'))) {
+      const name = entry.path.slice('package/'.length)
+      assert.deepEqual(await readFile(join(packageDirectory, name)), await readFile(join(projectDirectory, name)), `安装文件与当前构建不一致：${name}`)
+    }
     await access(shim)
     for (const [args, text] of [['--version', metadata.version], ['--help', 'Aboom Toolbox']])
       expectResult(run(shim, [args], directory), 0, text)
@@ -99,6 +112,6 @@ export async function verifyRelease(tarball) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  await verifyRelease(process.argv[2])
+  await verifyRelease(process.argv[2], { installSource: process.argv[3] })
   console.log('npm 包验收通过：文件白名单、运行依赖、隔离安装、命令启动及真实转换。')
 }

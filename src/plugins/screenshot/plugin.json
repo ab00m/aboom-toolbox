@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "entry": "index.ts",
+  "name": "screenshot",
+  "title": "截图压缩",
+  "description": "批量压缩截图，默认转 WebP 并等比缩小到最长边 1080 像素，不裁切",
+  "category": "图片工具",
+  "accent": "cyan",
+  "fields": [
+    {
+      "key": "input",
+      "label": "输入路径",
+      "description": "默认当前目录；文件或文件夹，可粘贴带双引号的路径",
+      "type": "text",
+      "default": "."
+    },
+    {
+      "key": "output",
+      "label": "输出目录",
+      "description": "留空时在输入目录下新建 aboom_output；指定目录则跳过或覆盖同名结果",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "output-grow-o",
+      "label": "输出目录增加 o",
+      "description": "自动输出重名时：开启增加中间的 o，关闭追加数字 1、2、3；指定输出目录不受影响",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "format",
+      "label": "输出格式",
+      "description": "默认 WebP，通常适合文档截图压缩；原格式会保留输入类型",
+      "type": "select",
+      "choices": ["webp", "jpeg", "png", "original"],
+      "choiceDescriptions": {
+        "webp": "WebP，有损压缩并保留透明通道",
+        "jpeg": "JPEG，适合照片，不支持透明通道",
+        "png": "PNG，无损压缩并保留透明通道",
+        "original": "沿用输入格式"
+      },
+      "default": "webp"
+    },
+    {
+      "key": "quality",
+      "label": "压缩质量",
+      "description": "WebP/JPEG 使用，范围 1～100，默认 85；PNG 使用无损压缩",
+      "type": "text",
+      "default": "85",
+      "required": true
+    },
+    {
+      "key": "dry-run",
+      "label": "仅预览处理计划",
+      "description": "读取尺寸并显示处理计划，不生成文件或目录",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "recursive",
+      "label": "包含子文件夹",
+      "description": "保留子文件夹结构，排除嵌套输出目录",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "overwrite",
+      "label": "覆盖已有结果",
+      "description": "默认跳过同名文件；覆盖需要确认",
+      "type": "boolean",
+      "default": false,
+      "confirmation": "将替换输出目录中的同名结果。"
+    }
+  ]
+}
