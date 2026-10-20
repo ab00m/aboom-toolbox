@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import process from 'node:process'
 import { it } from 'node:test'
@@ -113,12 +113,30 @@ it('版本与 package.json 一致', () => {
 })
 
 for (const name of ['excel', 'audio']) {
+  it(`${name} CLI 预览输出 JSON，不生成结果或目录`, async () => {
+    await withTemporaryDirectory(async (directory) => {
+      const filename = name === 'excel' ? 'sample.xlsx' : 'sample.wav'
+      await writeFile(join(directory, filename), name === 'excel' ? workbookBytes() : wavBytes())
+      const flags = name === 'audio' ? ['--ffmpeg', join(directory, 'missing-ffmpeg')] : []
+      const result = spawnSync(process.execPath, [...cliArguments, name, '--dry-run', '--json', ...flags], { cwd: directory, encoding: 'utf8' })
+      assert.equal(result.status, 0, result.stderr)
+      assert.equal(result.stderr, '')
+      const parsed = JSON.parse(result.stdout)
+      assert.equal(parsed.ok, true)
+      assert.equal(parsed.summary.converted, 0)
+      assert.equal(parsed.summary.skipped, 1)
+      assert.match(parsed.summary.results[0].message, /预览/)
+      assert.deepEqual(await readdir(directory), [filename])
+    })
+  })
+
   it(`${name} 帮助可用`, () => {
     const result = runCli(name, '--help')
     assert.equal(result.status, 0)
     assert.match(result.stdout, new RegExp(`aboom ${name}`))
     assert.match(result.stdout, /default: "\."/)
     assert.match(result.stdout, /留空在输入目录下新建 aboom_output/)
+    assert.match(result.stdout, /--dry-run/)
   })
 
   it(`${name} 不指定输入时扫描当前目录，空目录返回可读错误`, async () => {

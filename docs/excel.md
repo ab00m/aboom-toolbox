@@ -6,7 +6,10 @@
 aboom excel --input "./音效.xlsx" --preset sfx
 aboom excel --input "./数据.xlsx" --preset table
 aboom excel --input "./数据.xlsx" --preset table --schema "./excel.schema.json"
+aboom excel --input "./数据.xlsx" --schema "./excel.schema.json" --dry-run --json
 ```
+
+`--dry-run` 读取工作簿并应用同样的字段校验，显示条数与候选输出路径，但不创建目录或写入 JSON；已有结果不会被覆盖。预览仍检查存在对应输出文件的工作簿，校验错误按文件报告。成功预览在结构化结果中计入 `skipped`，校验失败计入 `failed`。TUI 中也可开启“仅预览处理计划”。
 
 TUI 中将焦点移到“格式预设”，Enter 展开规则列表，上下选择，Enter 确认，Esc 取消；也可填写格式配置文件。常用选择可保存到 `aboom.config.json`：
 

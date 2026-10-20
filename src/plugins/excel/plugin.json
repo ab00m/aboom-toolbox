@@ -30,6 +30,13 @@
       "default": true
     },
     {
+      "key": "dry-run",
+      "label": "仅预览处理计划",
+      "description": "校验工作表并显示条数与输出路径，不生成文件或目录",
+      "type": "boolean",
+      "default": false
+    },
+    {
       "key": "recursive",
       "label": "包含子文件夹",
       "description": "保留子文件夹结构，排除嵌套输出目录",

@@ -96,6 +96,86 @@ it('真实 XLSX：格式文件读取指定工作表和表头行，空白前导�
 
 const convertSfx = rows => convertRows(rows, resolveSchema('sfx'))
 
+it('Excel 预览验证真实工作簿和字段，不创建目录、不覆盖结果，逐文件报告错误', async () => {
+  await withTemporaryDirectory(async (directory) => {
+    const source = join(directory, 'valid.xlsx')
+    const bytes = workbookBytes()
+    await writeFile(source, bytes)
+    const options = { 'input': directory, 'dry-run': true }
+    const preview = await executeCommand(excelCommand, options)
+    assert.equal(preview.ok, true, JSON.stringify(preview))
+    assert.equal(preview.summary.converted, 0)
+    assert.equal(preview.summary.skipped, 1)
+    assert.match(preview.summary.results[0].message, /预览.*1 条/)
+    assert.deepEqual(await readdir(directory), ['valid.xlsx'])
+    const output = join(directory, 'out')
+    await mkdir(output)
+    await writeFile(join(output, 'valid.json'), 'preserve')
+    for (const overwrite of [false, true]) {
+      const result = await executeCommand(excelCommand, { ...options, output, overwrite })
+      assert.equal(result.ok, true)
+      assert.equal(result.summary.results[0].message.includes('已有结果，将跳过'), !overwrite)
+      assert.equal(await readFile(join(output, 'valid.json'), 'utf8'), 'preserve')
+    }
+    await writeFile(join(directory, 'broken.xlsx'), 'not a workbook')
+    const mixed = await executeCommand(excelCommand, options)
+    assert.equal(mixed.error.code, 'BATCH_FAILED')
+    assert.equal(mixed.summary.failed, 1)
+    assert.equal(mixed.summary.skipped, 1)
+    const schema = join(directory, 'format.json')
+    await writeFile(schema, JSON.stringify({ columns: { id: { header: 'Missing', type: 'integer' } } }))
+    const invalid = await executeCommand(excelCommand, { ...options, input: source, schema })
+    assert.match(invalid.summary.results[0].message, /缺少表头/)
+    await writeFile(schema, '{"headerrow":2}')
+    const invalidConfig = await executeCommand(excelCommand, { ...options, schema })
+    assert.equal(invalidConfig.error.code, 'COMMAND_FAILED')
+    assert.match(invalidConfig.error.detail, /未知字段/)
+    assert.deepEqual(await readFile(source), bytes)
+    assert.deepEqual((await readdir(directory)).sort(), ['broken.xlsx', 'format.json', 'out', 'valid.xlsx'])
+  })
+})
+
+it('音频预览递归文件计划无需 FFmpeg，保护已有结果并支持取消', async () => {
+  await withTemporaryDirectory(async (directory) => {
+    const nested = join(directory, 'nested')
+    await mkdir(nested)
+    const source = join(nested, 'sample.wav')
+    await writeFile(source, wavBytes())
+    const options = { 'input': directory, 'recursive': true, 'from': 'WAV', 'to': 'OGG', 'ffmpeg': join(directory, 'missing-ffmpeg'), 'dry-run': true }
+    const result = await executeCommand(audioCommand, options)
+    assert.equal(result.ok, true, JSON.stringify(result))
+    assert.equal(result.summary.skipped, 1)
+    assert.equal(result.summary.converted, 0)
+    assert.equal(result.summary.results[0].output, join(directory, 'aboom_output', 'nested', 'sample.ogg'))
+    assert.match(result.summary.results[0].message, /WAV → OGG/)
+    assert.match(result.summary.results[0].message, /未验证音频内容或 FFmpeg/)
+    assert.deepEqual(await readdir(directory), ['nested'])
+    const output = join(directory, 'out')
+    await mkdir(join(output, 'nested'), { recursive: true })
+    const existing = join(output, 'nested', 'sample.ogg')
+    await writeFile(existing, 'preserve')
+    for (const overwrite of [false, true]) {
+      const preview = await executeCommand(audioCommand, { ...options, output, overwrite })
+      assert.equal(preview.ok, true)
+      assert.equal(preview.summary.results[0].message.includes('已有结果，将跳过'), !overwrite)
+      assert.equal(await readFile(existing, 'utf8'), 'preserve')
+    }
+    const controller = new AbortController()
+    const cancelled = await executeCommand(audioCommand, options, {
+      signal: controller.signal,
+      onProgress(event) {
+        if (event.phase === 'prepare')
+          controller.abort()
+      },
+    })
+    assert.equal(cancelled.error.code, 'CANCELLED')
+    assert.deepEqual((await readdir(directory)).sort(), ['nested', 'out'])
+    const real = await executeCommand(audioCommand, { ...options, 'dry-run': false })
+    assert.equal(real.error.code, 'COMMAND_FAILED')
+    assert.match(real.error.detail, /FFmpeg/)
+  })
+})
+
 const copySpec = {
   sourceExtension: '.txt',
   targetExtension: '.json',
