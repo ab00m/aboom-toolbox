@@ -1,6 +1,6 @@
 import type { ToolCommand } from '../../core/types.js'
 import { readFile, writeFile } from 'node:fs/promises'
-import { runConversion } from '../../core/index.js'
+import { exists, runConversion } from '../../core/index.js'
 import { readWorkbook } from './adapter.js'
 import { convertRows } from './core.js'
 import { resolveSchema } from './schema.js'
@@ -22,6 +22,10 @@ const excelPlugin: Pick<ToolCommand, 'run'> = {
       sourceExtension: '.xlsx',
       targetExtension: '.json',
       ignoreOfficeTemporary: true,
+      async preview(job) {
+        const data = convertRows(await readWorkbook(job.source, schema.sheet), schema)
+        return `预览 ${job.source}：${data.length} 条 → ${job.output}${await exists(job.output) && options.overwrite !== true ? '（已有结果，将跳过）' : ''}`
+      },
       async write(job, temporary) {
         const data = convertRows(await readWorkbook(job.source, schema.sheet), schema)
         await writeFile(temporary, `${JSON.stringify(data, null, 2)}\n`, 'utf8')

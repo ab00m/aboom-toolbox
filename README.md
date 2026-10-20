@@ -55,6 +55,8 @@ aboom audio --input "./素材/音频" --from WAV --to OGG --recursive
 aboom image --input "./素材/图片" --size 2048 --crop-multiple --multiple 4 --recursive
 aboom screenshot --input "./素材/截图" --format webp --quality 85 --recursive
 aboom image --input "./素材/图片" --dry-run --json
+aboom excel --input "./素材/数据.xlsx" --dry-run --json
+aboom audio --input "./素材/音频" --from WAV --to OGG --dry-run --json
 aboom plugins
 ```
 
@@ -62,6 +64,8 @@ aboom plugins
 - **音频**：WAV/FLAC/OGG/MP3 互转。FLAC 无损，OGG 使用 libvorbis 质量 5，MP3 使用 libmp3lame 质量 2，WAV 为 16 位 PCM；保留采样率。可用 `--ffmpeg`、`ABOOM_FFMPEG` 或 PATH 指定程序，也会检查常见安装位置。显式路径无效时提示修正。
 - **图片**：PNG/JPG/JPEG 按最长边等比缩放，默认 2048；小图原样复制，`--allow-upscale` 允许放大。按倍数居中裁切在缩放后执行。缩放文件追加 `@<尺寸>`，裁切追加 `@clip`；保留 PNG 透明通道，JPEG 质量 92，校正 EXIF 方向。`--dry-run` 只预览，不生成文件或目录。
 - **截图压缩**：独立的 `screenshot` 命令，不执行裁切。默认转为 WebP（质量 85），等比缩小到最长边 1080 像素，适合贴入文档；也可选 JPEG、PNG 或原格式。
+
+Excel 和音频也支持 `--dry-run`，TUI 可开启“仅预览处理计划”。Excel 实际读取并校验工作表，显示导出条数；音频仅显示格式和目标路径，预览执行阶段不启动 FFmpeg，也不验证音频内容或编码器是否可用。TUI 启动或手动重新检测时仍会检查依赖，但 FFmpeg 不可用不妨碍预览。预览不生成文件或目录，即使启用 `--overwrite` 也不会覆盖结果。`--json` 中成功预览的文件计入 `summary.skipped`，不是已转换；Excel 校验失败仍报告失败并返回退出码 1。
 
 ## 输入与输出目录
 

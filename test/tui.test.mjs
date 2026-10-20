@@ -1,17 +1,43 @@
 import assert from 'node:assert/strict'
-import { readFile, writeFile } from 'node:fs/promises'
+import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { afterEach, it } from 'node:test'
 import { setTimeout } from 'node:timers/promises'
 import { cleanup, render } from 'ink-testing-library'
 import { createElement } from 'react'
-import { expectedTable, workbookBytes } from '../scripts/conversion-smoke.mjs'
+import { expectedTable, wavBytes, workbookBytes } from '../scripts/conversion-smoke.mjs'
 import { withTemporaryDirectory } from '../scripts/release-utils.mjs'
 import { applyConfig } from '../src/core/index.ts'
 import { App } from '../src/tui/App.tsx'
 import { audioCommand as realAudioCommand, excelCommand as realExcelCommand } from './tool-catalog.mjs'
 
 afterEach(cleanup)
+
+it('音频 TUI 在 FFmpeg 不可用时仍可选择预览，不生成输出', async () => {
+  await withTemporaryDirectory(async (directory) => {
+    await writeFile(join(directory, 'sample.wav'), wavBytes())
+    const command = {
+      ...realAudioCommand,
+      availability: { available: false, message: 'FFmpeg 不可用' },
+      fields: realAudioCommand.fields.map(field => field.key === 'input'
+        ? { ...field, default: directory }
+        : field.key === 'ffmpeg' ? { ...field, default: join(directory, 'missing-ffmpeg') } : field),
+    }
+    const ui = await open([command])
+    await press(ui, '\r')
+    assert.match(ui.lastFrame(), /FFmpeg 不可用/)
+    const previewIndex = command.fields.findIndex(field => field.key === 'dry-run')
+    for (let index = 0; index < previewIndex; index++)
+      await press(ui, '\t')
+    await press(ui, '\u001B[C')
+    for (let index = previewIndex; index < command.fields.length; index++)
+      await press(ui, '\t')
+    await press(ui, '\r')
+    await waitFor(() => /已完成/.test(ui.lastFrame()))
+    assert.match(ui.lastFrame(), /跳过 1/)
+    assert.deepEqual(await readdir(directory), ['sample.wav'])
+  })
+})
 
 it('Excel 选择列表确认/取消、连续导航与执行、配置预设及草稿保留', async () => {
   const received = []
@@ -313,7 +339,7 @@ it('表单不把 q 当作退出，支持 Unicode 光标编辑、缺少必填参�
   await press(ui, '\u001B[C')
   await press(ui, '\t')
   await press(ui, '\u001B[C')
-  for (let index = 0; index < 4; index++)
+  for (let index = plugin.fields.findIndex(field => field.key === 'to'); index < plugin.fields.length; index++)
     await press(ui, '\t')
   await press(ui, '\r')
   await waitFor(() => /已完成/.test(ui.lastFrame()))
