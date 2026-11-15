@@ -9,6 +9,40 @@ import { executeCommand } from '../src/core/index.ts'
 import { commands } from './tool-catalog.mjs'
 
 const image = commands.find(tool => tool.name === 'image')
+const screenshot = commands.find(tool => tool.name === 'screenshot')
+
+it('截图准备失败仅影响当前文件，保留有效计划的碰撞与全部输入保护', async () => {
+  await withTemporaryDirectory(async (directory) => {
+    const source = join(directory, 'sample.png')
+    const broken = join(directory, 'sample.webp')
+    const bytes = await fixture(source)
+    await writeFile(broken, 'broken image')
+    const output = join(directory, 'out')
+    const options = { input: directory, output }
+
+    const preview = await executeCommand(screenshot, { ...options, 'dry-run': true })
+    assert.equal(preview.error.code, 'BATCH_FAILED')
+    assert.equal(preview.summary.skipped, 1)
+    assert.equal(preview.summary.failed, 1)
+    await assert.rejects(access(output), { code: 'ENOENT' })
+
+    const result = await executeCommand(screenshot, options)
+    assert.equal(result.error.code, 'BATCH_FAILED')
+    assert.equal(result.summary.converted, 1)
+    assert.equal(result.summary.failed, 1)
+    assert.equal(result.summary.results.find(file => file.source === broken).status, 'failed')
+    assert.equal((await sharp(join(output, 'sample.webp')).metadata()).format, 'webp')
+
+    const protectedInput = await executeCommand(screenshot, { ...options, output: directory, overwrite: true })
+    assert.match(protectedInput.error.detail, /覆盖输入文件/)
+    assert.equal(await readFile(broken, 'utf8'), 'broken image')
+    assert.deepEqual(await readFile(source), bytes)
+
+    await sharp(source).webp().toFile(broken)
+    const collision = await executeCommand(screenshot, options)
+    assert.match(collision.error.detail, /同名结果/)
+  })
+})
 
 async function fixture(path, width = 83, height = 47) {
   await sharp({ create: { width, height, channels: 4, background: { r: 170, g: 90, b: 40, alpha: 0.5 } } }).png().toFile(path)

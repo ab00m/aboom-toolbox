@@ -156,8 +156,9 @@ export async function collectJobs(input: string, output: string, options: {
   return jobs
 }
 
-export async function validateJobs(jobs: readonly Job[]): Promise<void> {
-  const sources = new Set(jobs.map(job => pathKey(job.source)))
+/** 只校验可执行输出，但始终保护整个批次的输入。 */
+export async function validateJobs(jobs: readonly Job[], inputJobs: readonly Job[] = jobs): Promise<void> {
+  const sources = new Set(inputJobs.map(job => pathKey(job.source)))
   const destinations = new Set<string>()
   for (const job of jobs) {
     job.output = join(await canonical(dirname(job.output)), basename(job.output))
