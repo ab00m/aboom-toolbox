@@ -68,9 +68,9 @@ export async function runConversion<T = undefined>(options: ToolOptions, context
       prepared.set(job.source, error instanceof Error ? error : new Error(String(error)))
     }
   }
-  await validateJobs(jobs)
-  const preview = options['dry-run'] === true && spec.preview !== undefined
   const ready = jobs.filter(job => !(prepared.get(job.source) instanceof Error))
+  await validateJobs(ready, jobs)
+  const preview = options['dry-run'] === true && spec.preview !== undefined
   if (!preview && ready.length)
     await spec.beforeRun?.(ready, context, paths)
   context.signal?.throwIfAborted()
