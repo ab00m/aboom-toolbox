@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Aboom Toolbox</title>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./renderer.mjs"></script>
+</head>
+<body>
+  <main>
+    <header><span class="eyebrow">ABOOM TOOLBOX / 桌面原型</span><h1>图片工坊</h1><p>批量缩放 PNG 与 JPEG。原图不动，结果另存。</p></header>
+    <form id="convert">
+      <fieldset id="fields">
+        <div class="row"><span class="label">01 输入</span><output id="input">尚未选择</output><div class="actions"><button type="button" id="file">选图片</button><button type="button" id="folder">选文件夹</button></div></div>
+        <div class="row"><span class="label">02 输出</span><output id="output">自动创建新目录</output><div class="actions"><button type="button" id="choose-output">指定文件夹</button><button type="button" id="reset-output">自动</button></div></div>
+        <div class="row"><span class="label">03 设置</span><div class="options"><label>最长边 <input id="size" type="number" min="1" max="16384" value="2048" required> px</label><label><input id="recursive" type="checkbox"> 含子文件夹</label></div></div>
+        <div class="submit"><button type="submit" value="preview">预览处理计划</button><button class="primary" type="submit" value="run" id="run">开始处理</button></div>
+      </fieldset>
+      <button type="button" id="cancel" hidden>停止当前任务</button>
+    </form>
+    <section aria-label="处理结果"><p id="message" role="status">选择图片或文件夹后，可以先预览。</p><progress id="progress" aria-label="处理进度" hidden></progress><ul id="results"></ul></section>
+  </main>
+</body>
+</html>

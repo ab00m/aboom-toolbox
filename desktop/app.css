@@ -1,0 +1,25 @@
+:root { font: 15px/1.5 system-ui, sans-serif; color: #21221e; background: #f7f4ee; accent-color: #9f3212 }
+* { box-sizing: border-box }
+body { margin: 0 }
+main { max-width: 920px; margin: auto; padding: 40px 34px }
+header { margin-bottom: 20px }
+.eyebrow { color: #9f3212; font: 700 12px/1.2 ui-monospace, monospace; letter-spacing: .1em }
+h1 { margin: 6px 0; font-size: 42px; line-height: 1.1 }
+p { margin: 10px 0 }
+fieldset { margin: 0; padding: 0; border: 0; min-inline-size: 0 }
+.row { display: grid; grid-template-columns: 76px minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 14px 0; border-top: 1px solid #c4b9ab }
+.row > .label { font-weight: 700 }
+output, li { overflow-wrap: anywhere }
+.actions, .submit, .options { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.submit { margin: 16px 0 }
+button, input[type="number"] { font: inherit; color: inherit; border: 1px solid #63584d; border-radius: 3px; background: #fffaf1; padding: 6px 10px }
+button:not(:disabled) { cursor: pointer }
+button:disabled { opacity: .55 }
+button.primary { background: #9f3212; color: white; border-color: #9f3212 }
+input[type="number"] { width: 90px }
+:focus-visible { outline: 2px solid #9f3212; outline-offset: 3px }
+progress { width: 100% }
+#message { font-weight: 600 }
+#results { margin: 0; padding-left: 20px }
+#results li { margin: 6px 0 }
+@media (max-width: 620px) { main { padding: 28px 22px } .row { grid-template-columns: 70px 1fr } .actions { grid-column: 2 } }

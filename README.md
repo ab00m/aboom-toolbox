@@ -152,3 +152,16 @@ aboom excel --json
 ```
 
 `--progress` 默认开启；`--no-progress` 保留文件记录和统计；`--quiet` 仅输出错误；`--json` 优先，stdout 输出完整结构化结果，stderr 不显示进度。实际输出目录见 `summary.outputDirectory`，每个文件见 `summary.results`。退出码：成功 0、失败 1、取消 130。
+
+## 桌面图片工坊（开发原型）
+
+当前先验证一个任务：在原生窗口选 PNG/JPEG 文件或文件夹、预览缩放计划，再处理到新目录或指定目录。复用 CLI/TUI 的图片插件，不覆盖同名结果，也不修改源图；Excel、音频和其他插件仍用 CLI/TUI。
+
+在仓库中安装开发依赖并启动（Node.js 与 pnpm 版本按项目要求）：
+
+```sh
+pnpm install
+pnpm dev:desktop
+```
+
+首次启动需要 Electron 开发运行环境。文件处理在本机进行，无需服务端、登录或上传。当前不提供安装包、签名、自动更新或分发。
