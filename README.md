@@ -165,3 +165,7 @@ pnpm dev:desktop
 ```
 
 首次启动需要 Electron 开发运行环境。文件处理在本机进行，无需服务端、登录或上传。当前不提供安装包、签名、自动更新或分发。
+
+### 轻量桌面音频原型
+
+另有独立的 [Tauri 2 / Rust 音频工坊](desktop-tauri/README.md)，用于验证原生文件拖放、预览和 WAV → OGG；不替代上面的 Electron 图片工坊，不影响 CLI/TUI。

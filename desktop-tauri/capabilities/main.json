@@ -1,0 +1,6 @@
+{
+  "identifier": "local-audio",
+  "description": "Receive local application queue and progress events only.",
+  "windows": ["main"],
+  "permissions": ["core:event:allow-listen", "core:event:allow-unlisten"]
+}

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aboom Toolbox · 音频工坊</title>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <main>
+    <header class="masthead">
+      <div><p class="eyebrow">ABOOM TOOLBOX / DESKTOP</p><h1>音频工坊</h1></div>
+      <div class="index"><strong>01</strong><span>WAV → OGG</span></div>
+    </header>
+    <section class="drop" aria-labelledby="drop-label">
+      <div><h2 id="drop-label">把 WAV 文件拖进来</h2><p>可一次拖入多个文件。松手只添加，不会自动转换。</p></div>
+      <button id="choose" type="button" disabled>选择文件</button>
+    </section>
+    <section class="queue" aria-labelledby="queue-label">
+      <div class="heading"><h2 id="queue-label">转换队列 <span id="count">00</span></h2><button id="clear" type="button" class="quiet" disabled>清空</button></div>
+      <p>OGG 会另存到各自的源目录。同名结果跳过，保留 WAV 原件。</p>
+      <ol id="items"><li class="empty">还没有添加文件。</li></ol>
+    </section>
+    <div class="actions"><button id="preview" type="button" class="quiet" disabled>预览输出</button><button id="run" type="button" disabled>开始转换</button></div>
+    <progress id="progress" hidden aria-label="转换进度"></progress>
+    <p id="status" role="status">正在连接本地转换服务…</p>
+  </main>
+</body>
+</html>

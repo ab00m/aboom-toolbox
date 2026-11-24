@@ -5,7 +5,7 @@ export default antfu(
     typescript: true,
     react: true,
     test: false,
-    ignores: ['.agents/**', '.codex/**'],
+    ignores: ['.agents/**', '.codex/**', 'desktop-tauri/gen/**', 'desktop-tauri/target/**'],
   },
   {
     rules: {

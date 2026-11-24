@@ -1,0 +1,30 @@
+:root{color-scheme:light;--paper:#f7f2e9;--ink:#241d18;--muted:#61554b;--orange:#ff713b;--action:#aa360b;--line:#988878;--pale:#fbe5d9;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:var(--paper);font:15px/1.55 system-ui,sans-serif}
+body.is-drop{outline:4px solid var(--action);outline-offset:-4px;min-height:100vh}
+main{max-width:1000px;margin:auto;padding:32px clamp(20px,5vw,55px)}
+.masthead{display:grid;grid-template-columns:1fr minmax(108px,25%);background:var(--orange);min-height:156px}
+.masthead>div{padding:22px 26px}
+.eyebrow,.index span{font-size:11px;font-weight:750;letter-spacing:.13em}
+h1,h2,p{margin:0}h1{font-size:clamp(37px,6vw,62px);line-height:1.12;margin-top:14px;letter-spacing:-.055em}
+.index{border-left:1px solid var(--ink);display:flex;flex-direction:column;justify-content:center;gap:8px}
+.index strong{font-size:clamp(33px,6vw,60px);line-height:1;letter-spacing:-.065em}
+.drop{display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px dashed var(--line);padding:20px;margin:24px 0;background:var(--white)}
+.is-drop .drop{border:2px solid var(--action);padding:19px;background:var(--pale)}
+h2{font-size:20px}
+h2+p,.queue>p{color:var(--muted);margin-top:4px}
+.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:3px solid var(--action);padding-top:10px}
+#count{color:var(--action);margin-left:8px;font-variant-numeric:tabular-nums}
+ol{padding:0;list-style:none;max-height:245px;overflow:auto;margin:14px 0}
+li{padding:9px 12px;background:var(--white);border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+li span{display:block;font-size:13px;color:var(--muted)}
+li[data-status="error"] strong{color:#a32428}li[data-status="done"] strong{color:#246c49}
+.empty{color:var(--muted)}
+button{font:inherit;font-weight:700;background:var(--action);color:var(--white);padding:9px 16px;border:1px solid var(--action);border-radius:0 12px 0 0;min-height:42px;white-space:nowrap;cursor:pointer}
+button.quiet{background:transparent;color:var(--ink);border-color:var(--line)}
+button:disabled{color:var(--muted);background:#e9e0d5;border-color:#e9e0d5;cursor:default}
+button:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+.actions{display:flex;gap:10px;margin:18px 0 10px}
+progress{width:100%;accent-color:var(--action)}
+#status{color:var(--muted);min-height:24px}
+@media(max-width:550px){.masthead>div{padding:18px}.drop{flex-wrap:wrap}main{padding:24px 20px}}
